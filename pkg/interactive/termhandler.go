@@ -229,7 +229,7 @@ func (i *interactive) updateFilter(name, value string, replace bool) {
 	if value == "none" {
 		i.Job.Config.MatcherManager.RemoveFilter(name)
 	} else {
-		_ = i.Job.Config.MatcherManager.AddFilter(name, value, replace)
+		_ = i.Job.Config.MatcherManager.AddFilter(name, value, replace, false)
 	}
 	i.refreshResults()
 }

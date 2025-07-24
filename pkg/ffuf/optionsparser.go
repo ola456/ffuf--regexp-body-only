@@ -96,13 +96,14 @@ type OutputOptions struct {
 }
 
 type FilterOptions struct {
-	Mode   string `json:"mode"`
-	Lines  string `json:"lines"`
-	Regexp string `json:"regexp"`
-	Size   string `json:"size"`
-	Status string `json:"status"`
-	Time   string `json:"time"`
-	Words  string `json:"words"`
+	Mode           string `json:"mode"`
+	Lines          string `json:"lines"`
+	Regexp         string `json:"regexp"`
+	RegexpBodyOnly bool   `json:"regexp_body_only"`
+	Size           string `json:"size"`
+	Status         string `json:"status"`
+	Time           string `json:"time"`
+	Words          string `json:"words"`
 }
 
 type MatcherOptions struct {
@@ -121,6 +122,7 @@ func NewConfigOptions() *ConfigOptions {
 	c.Filter.Mode = "or"
 	c.Filter.Lines = ""
 	c.Filter.Regexp = ""
+	c.Filter.RegexpBodyOnly = false
 	c.Filter.Size = ""
 	c.Filter.Status = ""
 	c.Filter.Time = ""
@@ -563,6 +565,7 @@ func ConfigFromOptions(parseOpts *ConfigOptions, ctx context.Context, cancel con
 		errs.Add(fmt.Errorf(errmsg))
 	}
 	conf.FilterMode = parseOpts.Filter.Mode
+	conf.RegexpBodyOnly = parseOpts.Filter.RegexpBodyOnly
 	conf.MatcherMode = parseOpts.Matcher.Mode
 
 	if conf.AutoCalibrationPerHost {

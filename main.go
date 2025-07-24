@@ -99,6 +99,7 @@ func ParseFlags(opts *ffuf.ConfigOptions) *ffuf.ConfigOptions {
 	flag.StringVar(&opts.Filter.Mode, "fmode", opts.Filter.Mode, "Filter set operator. Either of: and, or")
 	flag.StringVar(&opts.Filter.Lines, "fl", opts.Filter.Lines, "Filter by amount of lines in response. Comma separated list of line counts and ranges")
 	flag.StringVar(&opts.Filter.Regexp, "fr", opts.Filter.Regexp, "Filter regexp")
+	flag.BoolVar(&opts.Filter.RegexpBodyOnly, "regexp-body-only", opts.Filter.RegexpBodyOnly, "Only match regexp (-fr/-mr) on response body, not headers.")
 	flag.StringVar(&opts.Filter.Size, "fs", opts.Filter.Size, "Filter HTTP response size. Comma separated list of sizes and ranges")
 	flag.StringVar(&opts.Filter.Status, "fc", opts.Filter.Status, "Filter HTTP status codes from response. Comma separated list of codes and ranges")
 	flag.StringVar(&opts.Filter.Time, "ft", opts.Filter.Time, "Filter by number of milliseconds to the first response byte, either greater or less than. EG: >100 or <100")
@@ -346,66 +347,66 @@ func SetupFilters(parseOpts *ffuf.ConfigOptions, conf *ffuf.Config) error {
 	})
 	// Only set default matchers if no
 	if statusSet || !matcherSet {
-		if err := conf.MatcherManager.AddMatcher("status", parseOpts.Matcher.Status); err != nil {
+		if err := conf.MatcherManager.AddMatcher("status", parseOpts.Matcher.Status, false); err != nil {
 			errs.Add(err)
 		}
 	}
 
 	if parseOpts.Filter.Status != "" {
-		if err := conf.MatcherManager.AddFilter("status", parseOpts.Filter.Status, false); err != nil {
+		if err := conf.MatcherManager.AddFilter("status", parseOpts.Filter.Status, false, false); err != nil {
 			errs.Add(err)
 		}
 	}
 	if parseOpts.Filter.Size != "" {
 		warningIgnoreBody = true
-		if err := conf.MatcherManager.AddFilter("size", parseOpts.Filter.Size, false); err != nil {
+		if err := conf.MatcherManager.AddFilter("size", parseOpts.Filter.Size, false, false); err != nil {
 			errs.Add(err)
 		}
 	}
 	if parseOpts.Filter.Regexp != "" {
-		if err := conf.MatcherManager.AddFilter("regexp", parseOpts.Filter.Regexp, false); err != nil {
+		if err := conf.MatcherManager.AddFilter("regexp", parseOpts.Filter.Regexp, false, conf.RegexpBodyOnly); err != nil {
 			errs.Add(err)
 		}
 	}
 	if parseOpts.Filter.Words != "" {
 		warningIgnoreBody = true
-		if err := conf.MatcherManager.AddFilter("word", parseOpts.Filter.Words, false); err != nil {
+		if err := conf.MatcherManager.AddFilter("word", parseOpts.Filter.Words, false, false); err != nil {
 			errs.Add(err)
 		}
 	}
 	if parseOpts.Filter.Lines != "" {
 		warningIgnoreBody = true
-		if err := conf.MatcherManager.AddFilter("line", parseOpts.Filter.Lines, false); err != nil {
+		if err := conf.MatcherManager.AddFilter("line", parseOpts.Filter.Lines, false, false); err != nil {
 			errs.Add(err)
 		}
 	}
 	if parseOpts.Filter.Time != "" {
-		if err := conf.MatcherManager.AddFilter("time", parseOpts.Filter.Time, false); err != nil {
+		if err := conf.MatcherManager.AddFilter("time", parseOpts.Filter.Time, false, false); err != nil {
 			errs.Add(err)
 		}
 	}
 	if parseOpts.Matcher.Size != "" {
-		if err := conf.MatcherManager.AddMatcher("size", parseOpts.Matcher.Size); err != nil {
+		if err := conf.MatcherManager.AddMatcher("size", parseOpts.Matcher.Size, false); err != nil {
 			errs.Add(err)
 		}
 	}
 	if parseOpts.Matcher.Regexp != "" {
-		if err := conf.MatcherManager.AddMatcher("regexp", parseOpts.Matcher.Regexp); err != nil {
+		if err := conf.MatcherManager.AddMatcher("regexp", parseOpts.Matcher.Regexp, conf.RegexpBodyOnly); err != nil {
 			errs.Add(err)
 		}
 	}
 	if parseOpts.Matcher.Words != "" {
-		if err := conf.MatcherManager.AddMatcher("word", parseOpts.Matcher.Words); err != nil {
+		if err := conf.MatcherManager.AddMatcher("word", parseOpts.Matcher.Words, false); err != nil {
 			errs.Add(err)
 		}
 	}
 	if parseOpts.Matcher.Lines != "" {
-		if err := conf.MatcherManager.AddMatcher("line", parseOpts.Matcher.Lines); err != nil {
+		if err := conf.MatcherManager.AddMatcher("line", parseOpts.Matcher.Lines, false); err != nil {
 			errs.Add(err)
 		}
 	}
 	if parseOpts.Matcher.Time != "" {
-		if err := conf.MatcherManager.AddMatcher("time", parseOpts.Matcher.Time); err != nil {
+		if err := conf.MatcherManager.AddMatcher("time", parseOpts.Matcher.Time, false); err != nil {
 			errs.Add(err)
 		}
 	}

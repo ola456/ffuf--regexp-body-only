@@ -205,7 +205,7 @@ func (j *Job) calibrateFilters(responses []Response, perHost bool) error {
 						return nil
 					}
 				}
-				_ = j.Config.MatcherManager.AddFilter("size", strconv.FormatInt(baselineSize, 10), false)
+				_ = j.Config.MatcherManager.AddFilter("size", strconv.FormatInt(baselineSize, 10), false, false)
 				return nil
 			}
 		}
@@ -239,7 +239,7 @@ func (j *Job) calibrateFilters(responses []Response, perHost bool) error {
 						return nil
 					}
 				}
-				_ = j.Config.MatcherManager.AddFilter("word", strconv.FormatInt(baselineWords, 10), false)
+				_ = j.Config.MatcherManager.AddFilter("word", strconv.FormatInt(baselineWords, 10), false, false)
 				return nil
 			}
 		}
@@ -273,7 +273,7 @@ func (j *Job) calibrateFilters(responses []Response, perHost bool) error {
 						return nil
 					}
 				}
-				_ = j.Config.MatcherManager.AddFilter("line", strconv.FormatInt(baselineLines, 10), false)
+				_ = j.Config.MatcherManager.AddFilter("line", strconv.FormatInt(baselineLines, 10), false, false)
 				return nil
 			}
 		}

@@ -8,7 +8,7 @@ import (
 )
 
 func TestNewRegexpFilter(t *testing.T) {
-	f, _ := NewRegexpFilter("s([a-z]+)arch")
+	f, _ := NewRegexpFilter("s([a-z]+)arch", false)
 	statusRepr := f.Repr()
 	if !strings.Contains(statusRepr, "s([a-z]+)arch") {
 		t.Errorf("Status filter was expected to have a regexp value")
@@ -16,14 +16,14 @@ func TestNewRegexpFilter(t *testing.T) {
 }
 
 func TestNewRegexpFilterError(t *testing.T) {
-	_, err := NewRegexpFilter("r((")
+	_, err := NewRegexpFilter("r((", false)
 	if err == nil {
 		t.Errorf("Was expecting an error from errenous input data")
 	}
 }
 
 func TestRegexpFiltering(t *testing.T) {
-	f, _ := NewRegexpFilter("s([a-z]+)arch")
+	f, _ := NewRegexpFilter("s([a-z]+)arch", false)
 	for i, test := range []struct {
 		input  string
 		output bool

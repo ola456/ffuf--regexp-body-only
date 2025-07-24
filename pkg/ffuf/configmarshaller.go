@@ -82,6 +82,7 @@ func (c *Config) ToOptions() ConfigOptions {
 	o.Output.OutputSkipEmptyFile = c.OutputSkipEmptyFile
 
 	o.Filter.Mode = c.FilterMode
+	o.Filter.RegexpBodyOnly = c.RegexpBodyOnly
 	o.Filter.Lines = ""
 	o.Filter.Regexp = ""
 	o.Filter.Size = ""

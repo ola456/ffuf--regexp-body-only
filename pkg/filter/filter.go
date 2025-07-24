@@ -52,7 +52,7 @@ func (f *MatcherManager) SetCalibratedForHost(host string, value bool) {
 	}
 }
 
-func NewFilterByName(name string, value string) (ffuf.FilterProvider, error) {
+func NewFilterByName(name string, value string, bodyOnly bool) (ffuf.FilterProvider, error) {
 	if name == "status" {
 		return NewStatusFilter(value)
 	}
@@ -66,7 +66,7 @@ func NewFilterByName(name string, value string) (ffuf.FilterProvider, error) {
 		return NewLineFilter(value)
 	}
 	if name == "regexp" {
-		return NewRegexpFilter(value)
+		return NewRegexpFilter(value, bodyOnly)
 	}
 	if name == "time" {
 		return NewTimeFilter(value)
@@ -74,18 +74,17 @@ func NewFilterByName(name string, value string) (ffuf.FilterProvider, error) {
 	return nil, fmt.Errorf("Could not create filter with name %s", name)
 }
 
-//AddFilter adds a new filter to MatcherManager
-func (f *MatcherManager) AddFilter(name string, option string, replace bool) error {
+func (f *MatcherManager) AddFilter(name string, option string, replace bool, bodyOnly bool) error {
 	f.Mutex.Lock()
 	defer f.Mutex.Unlock()
-	newf, err := NewFilterByName(name, option)
+	newf, err := NewFilterByName(name, option, bodyOnly)
 	if err == nil {
 		// valid filter create or append
 		if f.Filters[name] == nil || replace {
 			f.Filters[name] = newf
 		} else {
 			newoption := f.Filters[name].Repr() + "," + option
-			newerf, err := NewFilterByName(name, newoption)
+			newerf, err := NewFilterByName(name, newoption, bodyOnly)
 			if err == nil {
 				f.Filters[name] = newerf
 			}
@@ -104,14 +103,14 @@ func (f *MatcherManager) AddPerDomainFilter(domain string, name string, option s
 	} else {
 		pdFilters = NewPerDomainFilter(f.Filters)
 	}
-	newf, err := NewFilterByName(name, option)
+	newf, err := NewFilterByName(name, option, false)
 	if err == nil {
 		// valid filter create or append
 		if pdFilters.Filters[name] == nil {
 			pdFilters.Filters[name] = newf
 		} else {
 			newoption := pdFilters.Filters[name].Repr() + "," + option
-			newerf, err := NewFilterByName(name, newoption)
+			newerf, err := NewFilterByName(name, newoption, false)
 			if err == nil {
 				pdFilters.Filters[name] = newerf
 			}
@@ -128,18 +127,17 @@ func (f *MatcherManager) RemoveFilter(name string) {
 	delete(f.Filters, name)
 }
 
-//AddMatcher adds a new matcher to Config
-func (f *MatcherManager) AddMatcher(name string, option string) error {
+func (f *MatcherManager) AddMatcher(name string, option string, bodyOnly bool) error {
 	f.Mutex.Lock()
 	defer f.Mutex.Unlock()
-	newf, err := NewFilterByName(name, option)
+	newf, err := NewFilterByName(name, option, bodyOnly)
 	if err == nil {
 		// valid filter create or append
 		if f.Matchers[name] == nil {
 			f.Matchers[name] = newf
 		} else {
 			newoption := f.Matchers[name].Repr() + "," + option
-			newerf, err := NewFilterByName(name, newoption)
+			newerf, err := NewFilterByName(name, newoption, bodyOnly)
 			if err == nil {
 				f.Matchers[name] = newerf
 			}

@@ -8,10 +8,10 @@ import (
 type MatcherManager interface {
 	SetCalibrated(calibrated bool)
 	SetCalibratedForHost(host string, calibrated bool)
-	AddFilter(name string, option string, replace bool) error
+	AddFilter(name string, option string, replace bool, bodyOnly bool) error
 	AddPerDomainFilter(domain string, name string, option string) error
 	RemoveFilter(name string)
-	AddMatcher(name string, option string) error
+	AddMatcher(name string, option string, bodyOnly bool) error
 	GetFilters() map[string]FilterProvider
 	GetMatchers() map[string]FilterProvider
 	FiltersForDomain(domain string) map[string]FilterProvider

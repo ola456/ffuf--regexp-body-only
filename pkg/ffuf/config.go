@@ -51,6 +51,7 @@ type Config struct {
 	Recursion                 bool                  `json:"recursion"`
 	RecursionDepth            int                   `json:"recursion_depth"`
 	RecursionStrategy         string                `json:"recursion_strategy"`
+	RegexpBodyOnly            bool                  `json:"regexp_body_only"`
 	ReplayProxyURL            string                `json:"replayproxyurl"`
 	RequestFile               string                `json:"requestfile"`
 	RequestProto              string                `json:"requestproto"`
@@ -114,6 +115,7 @@ func NewConfig(ctx context.Context, cancel context.CancelFunc) Config {
 	conf.Recursion = false
 	conf.RecursionDepth = 0
 	conf.RecursionStrategy = "default"
+	conf.RegexpBodyOnly = false
 	conf.RequestFile = ""
 	conf.RequestProto = "https"
 	conf.SNI = ""
