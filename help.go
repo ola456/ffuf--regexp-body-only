@@ -82,7 +82,7 @@ func Usage() {
 		Description:   "Filters for the response filtering.",
 		Flags:         make([]UsageFlag, 0),
 		Hidden:        false,
-		ExpectedFlags: []string{"fmode", "fc", "fl", "fr", "fs", "ft", "fw"},
+		ExpectedFlags: []string{"fmode", "fc", "fl", "fr", "fs", "ft", "fw", "regexp-body-only"},
 	}
 	u_input := UsageSection{
 		Name:          "INPUT OPTIONS",
