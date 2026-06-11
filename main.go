@@ -99,7 +99,7 @@ func ParseFlags(opts *ffuf.ConfigOptions) *ffuf.ConfigOptions {
 	flag.StringVar(&opts.Filter.Mode, "fmode", opts.Filter.Mode, "Filter set operator. Either of: and, or")
 	flag.StringVar(&opts.Filter.Lines, "fl", opts.Filter.Lines, "Filter by amount of lines in response. Comma separated list of line counts and ranges")
 	flag.StringVar(&opts.Filter.Regexp, "fr", opts.Filter.Regexp, "Filter regexp")
-	flag.BoolVar(&opts.Filter.RegexpBodyOnly, "regexp-body-only", opts.Filter.RegexpBodyOnly, "Only match regexp (-fr/-mr) on response body, not headers.")
+	flag.BoolVar(&opts.Filter.RegexpBodyOnly, "mrb", opts.Filter.RegexpBodyOnly, "Only match regexp (-fr/-mr) on response body, not headers.")
 	flag.StringVar(&opts.Filter.Size, "fs", opts.Filter.Size, "Filter HTTP response size. Comma separated list of sizes and ranges")
 	flag.StringVar(&opts.Filter.Status, "fc", opts.Filter.Status, "Filter HTTP status codes from response. Comma separated list of codes and ranges")
 	flag.StringVar(&opts.Filter.Time, "ft", opts.Filter.Time, "Filter by number of milliseconds to the first response byte, either greater or less than. EG: >100 or <100")
