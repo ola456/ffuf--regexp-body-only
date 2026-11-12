@@ -115,7 +115,7 @@ type FilterOptions struct {
 	Mode           string `json:"mode" ffuf:"fmode" section:"filter" usage:"Filter set operator. Either of: and, or"`
 	Lines          string `json:"lines" ffuf:"fl" section:"filter" usage:"Filter by amount of lines in response. Comma separated list of line counts and ranges"`
 	Regexp         string `json:"regexp" ffuf:"fr" section:"filter" usage:"Filter regexp"`
-	RegexpBodyOnly bool   `json:"regexp_body_only" toml:"regexp_body_only" ffuf:"rbo" section:"filter" usage:"Match -mr and -fr against response bodies only"`
+	RegexpBodyOnly bool   `json:"regexp_body_only" toml:"regexp_body_only" ffuf:"rbo" section:"general" usage:"Match -mr and -fr against response bodies only"`
 	Size           string `json:"size" ffuf:"fs" section:"filter" usage:"Filter HTTP response size. Comma separated list of sizes and ranges"`
 	Status         string `json:"status" ffuf:"fc" section:"filter" usage:"Filter HTTP status codes from response. Comma separated list of codes and ranges"`
 	Time           string `json:"time" ffuf:"ft" section:"filter" usage:"Filter by number of milliseconds to the first response byte, either greater or less than. EG: >100 or <100"`

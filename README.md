@@ -194,6 +194,7 @@ GENERAL OPTIONS:
   -noninteractive     Disable the interactive console functionality (default: false)
   -p                  Seconds of `delay` between requests, or a range of random delay. For example "0.1" or "0.1-2.0"
   -rate               Rate of requests per second (default: 0)
+  -rbo                Match -mr and -fr against response bodies only (default: false)
   -s                  Do not print additional information (silent mode) (default: false)
   -sa                 Stop on all error cases. Implies -sf and -se. (default: false)
   -scraperfile        Custom scraper file path
@@ -221,7 +222,6 @@ FILTER OPTIONS:
   -fs                 Filter HTTP response size. Comma separated list of sizes and ranges
   -ft                 Filter by number of milliseconds to the first response byte, either greater or less than. EG: >100 or <100
   -fw                 Filter by amount of words in response. Comma separated list of word counts and ranges
-  -rbo                Match -mr and -fr against response bodies only (default: false)
 
 INPUT OPTIONS:
   -D                  DirSearch wordlist compatibility mode. Used in conjunction with -e flag. (default: false)

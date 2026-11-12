@@ -47,13 +47,13 @@ func TestRegisterFlags_Wellformed(t *testing.T) {
 		// General
 		"V": true, "ac": true, "acc": true, "ach": true, "ack": true, "acs": true,
 		"c": true, "config": true, "json": true, "maxtime": true, "maxtime-job": true,
-		"noninteractive": true, "p": true, "rate": true, "s": true, "sa": true,
+		"noninteractive": true, "p": true, "rate": true, "rbo": true, "s": true, "sa": true,
 		"scraperfile": true, "scrapers": true, "se": true, "search": true, "sf": true,
 		"t": true, "v": true,
 		// Matcher
 		"mc": true, "ml": true, "mmode": true, "mr": true, "ms": true, "mt": true, "mw": true,
 		// Filter
-		"fc": true, "fl": true, "fmode": true, "fr": true, "fs": true, "ft": true, "fw": true, "rbo": true,
+		"fc": true, "fl": true, "fmode": true, "fr": true, "fs": true, "ft": true, "fw": true,
 		// Input
 		"D": true, "e": true, "enc": true, "ic": true, "input-cmd": true, "input-num": true,
 		"input-shell": true, "mode": true, "request": true, "request-proto": true, "w": true,
@@ -90,6 +90,9 @@ func TestRegisterFlags_Wellformed(t *testing.T) {
 		if !expected[name] {
 			t.Errorf("unexpected flag -%s registered — add it to the expected set deliberately", name)
 		}
+	}
+	if section, ok := reg.SectionOf("rbo"); !ok || section != SectionGeneral {
+		t.Errorf("-rbo belongs in general options, got %q", section)
 	}
 }
 
