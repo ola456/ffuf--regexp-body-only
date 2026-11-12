@@ -53,7 +53,7 @@ func TestRegisterFlags_Wellformed(t *testing.T) {
 		// Matcher
 		"mc": true, "ml": true, "mmode": true, "mr": true, "ms": true, "mt": true, "mw": true,
 		// Filter
-		"fc": true, "fl": true, "fmode": true, "fr": true, "fs": true, "ft": true, "fw": true, "mrb": true,
+		"fc": true, "fl": true, "fmode": true, "fr": true, "fs": true, "ft": true, "fw": true, "rbo": true,
 		// Input
 		"D": true, "e": true, "enc": true, "ic": true, "input-cmd": true, "input-num": true,
 		"input-shell": true, "mode": true, "request": true, "request-proto": true, "w": true,
@@ -108,13 +108,13 @@ func TestRegexpBodyOnlyFlagAndConfig(t *testing.T) {
 
 	fs := flag.NewFlagSet("ffuf", flag.ContinueOnError)
 	RegisterFlags(fs, opts)
-	if err := fs.Parse([]string{"-mrb=false"}); err != nil {
+	if err := fs.Parse([]string{"-rbo=false"}); err != nil {
 		t.Fatal(err)
 	}
 	if opts.Filter.RegexpBodyOnly {
 		t.Fatal("CLI flag did not override the config file")
 	}
-	if err := fs.Set("mrb", "true"); err != nil {
+	if err := fs.Set("rbo", "true"); err != nil {
 		t.Fatal(err)
 	}
 	opts.HTTP.URL = "https://example.org/FUZZ"
