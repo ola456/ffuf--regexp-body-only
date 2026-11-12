@@ -11,7 +11,7 @@ import (
 // set, so it stays in main and is passed in as addDefaultStatusMatcher.
 func FromConfig(opts *ffuf.ConfigOptions, addDefaultStatusMatcher bool) (ffuf.MatcherManager, error) {
 	errs := ffuf.NewMultierror()
-	mm := NewMatcherManager()
+	mm := newMatcherManager(opts.Filter.RegexpBodyOnly)
 
 	if addDefaultStatusMatcher {
 		if err := mm.AddMatcher("status", opts.Matcher.Status); err != nil {

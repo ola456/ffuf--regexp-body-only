@@ -73,6 +73,7 @@
     mode = "or"
     lines = ""
     regexp = ""
+    regexp_body_only = false
     size = ""
     status = ""
     time = ""

@@ -1,7 +1,10 @@
 package ffuf
 
 import (
+	"context"
 	"flag"
+	"os"
+	"path/filepath"
 	"testing"
 )
 
@@ -31,7 +34,7 @@ func TestRegisterFlags_Wellformed(t *testing.T) {
 
 	// The full expected flag surface. Unlike a bare count, this catches a net-zero
 	// add-and-remove, a rename, or a duplicate — update it DELIBERATELY when the CLI
-	// surface changes. 80 visible flags + 7 hidden compat (4 aliases + 3 dummies).
+	// surface changes. 81 visible flags + 7 hidden compat (4 aliases + 3 dummies).
 	expected := map[string]bool{
 		// HTTP
 		"H": true, "X": true, "b": true, "cc": true, "ck": true, "d": true,
@@ -50,7 +53,7 @@ func TestRegisterFlags_Wellformed(t *testing.T) {
 		// Matcher
 		"mc": true, "ml": true, "mmode": true, "mr": true, "ms": true, "mt": true, "mw": true,
 		// Filter
-		"fc": true, "fl": true, "fmode": true, "fr": true, "fs": true, "ft": true, "fw": true,
+		"fc": true, "fl": true, "fmode": true, "fr": true, "fs": true, "ft": true, "fw": true, "mrb": true,
 		// Input
 		"D": true, "e": true, "enc": true, "ic": true, "input-cmd": true, "input-num": true,
 		"input-shell": true, "mode": true, "request": true, "request-proto": true, "w": true,
@@ -87,5 +90,40 @@ func TestRegisterFlags_Wellformed(t *testing.T) {
 		if !expected[name] {
 			t.Errorf("unexpected flag -%s registered — add it to the expected set deliberately", name)
 		}
+	}
+}
+
+func TestRegexpBodyOnlyFlagAndConfig(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "ffufrc")
+	if err := os.WriteFile(path, []byte("[filter]\nregexp_body_only = true\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	opts, err := ReadConfig(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !opts.Filter.RegexpBodyOnly {
+		t.Fatal("config file did not enable regexp body matching")
+	}
+
+	fs := flag.NewFlagSet("ffuf", flag.ContinueOnError)
+	RegisterFlags(fs, opts)
+	if err := fs.Parse([]string{"-mrb=false"}); err != nil {
+		t.Fatal(err)
+	}
+	if opts.Filter.RegexpBodyOnly {
+		t.Fatal("CLI flag did not override the config file")
+	}
+	if err := fs.Set("mrb", "true"); err != nil {
+		t.Fatal(err)
+	}
+	opts.HTTP.URL = "https://example.org/FUZZ"
+	opts.Input.Wordlists = []string{"/tmp/wl.txt"}
+	conf, err := ConfigFromOptions(opts, context.Background(), func() {})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !conf.RegexpBodyOnly || !conf.Options.Filter.RegexpBodyOnly {
+		t.Fatal("regexp body setting was lost in the parsed config")
 	}
 }

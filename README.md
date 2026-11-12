@@ -221,6 +221,7 @@ FILTER OPTIONS:
   -fs                 Filter HTTP response size. Comma separated list of sizes and ranges
   -ft                 Filter by number of milliseconds to the first response byte, either greater or less than. EG: >100 or <100
   -fw                 Filter by amount of words in response. Comma separated list of word counts and ranges
+  -mrb                Match -mr and -fr against response bodies only (default: false)
 
 INPUT OPTIONS:
   -D                  DirSearch wordlist compatibility mode. Used in conjunction with -e flag. (default: false)

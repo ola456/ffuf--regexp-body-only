@@ -19,6 +19,7 @@ import (
 // created) keeps the caller's iteration off the shared map.
 type MatcherManager struct {
 	mu               sync.RWMutex
+	regexpBodyOnly   bool
 	IsCalibrated     bool
 	Matchers         map[string]ffuf.FilterProvider
 	Filters          map[string]ffuf.FilterProvider
@@ -52,12 +53,24 @@ func copyFilterMap(in map[string]ffuf.FilterProvider) map[string]ffuf.FilterProv
 }
 
 func NewMatcherManager() ffuf.MatcherManager {
+	return newMatcherManager(false)
+}
+
+func newMatcherManager(regexpBodyOnly bool) *MatcherManager {
 	return &MatcherManager{
+		regexpBodyOnly:   regexpBodyOnly,
 		IsCalibrated:     false,
 		Matchers:         make(map[string]ffuf.FilterProvider),
 		Filters:          make(map[string]ffuf.FilterProvider),
 		PerDomainFilters: make(map[string]*PerDomainFilter),
 	}
+}
+
+func (f *MatcherManager) newFilterByName(name, value string) (ffuf.FilterProvider, error) {
+	if name == "regexp" {
+		return newRegexpFilter(value, f.regexpBodyOnly)
+	}
+	return NewFilterByName(name, value)
 }
 
 func (f *MatcherManager) SetCalibrated(value bool) {
@@ -104,14 +117,14 @@ func NewFilterByName(name string, value string) (ffuf.FilterProvider, error) {
 func (f *MatcherManager) AddFilter(name string, option string, replace bool) error {
 	f.mu.Lock()
 	defer f.mu.Unlock()
-	newf, err := NewFilterByName(name, option)
+	newf, err := f.newFilterByName(name, option)
 	if err == nil {
 		// valid filter create or append
 		if f.Filters[name] == nil || replace {
 			f.Filters[name] = newf
 		} else {
 			newoption := f.Filters[name].Repr() + "," + option
-			newerf, err := NewFilterByName(name, newoption)
+			newerf, err := f.newFilterByName(name, newoption)
 			if err == nil {
 				f.Filters[name] = newerf
 			}
@@ -130,14 +143,14 @@ func (f *MatcherManager) AddPerDomainFilter(domain string, name string, option s
 	} else {
 		pdFilters = NewPerDomainFilter(f.Filters)
 	}
-	newf, err := NewFilterByName(name, option)
+	newf, err := f.newFilterByName(name, option)
 	if err == nil {
 		// valid filter create or append
 		if pdFilters.Filters[name] == nil {
 			pdFilters.Filters[name] = newf
 		} else {
 			newoption := pdFilters.Filters[name].Repr() + "," + option
-			newerf, err := NewFilterByName(name, newoption)
+			newerf, err := f.newFilterByName(name, newoption)
 			if err == nil {
 				pdFilters.Filters[name] = newerf
 			}
@@ -158,14 +171,14 @@ func (f *MatcherManager) RemoveFilter(name string) {
 func (f *MatcherManager) AddMatcher(name string, option string) error {
 	f.mu.Lock()
 	defer f.mu.Unlock()
-	newf, err := NewFilterByName(name, option)
+	newf, err := f.newFilterByName(name, option)
 	if err == nil {
 		// valid filter create or append
 		if f.Matchers[name] == nil {
 			f.Matchers[name] = newf
 		} else {
 			newoption := f.Matchers[name].Repr() + "," + option
-			newerf, err := NewFilterByName(name, newoption)
+			newerf, err := f.newFilterByName(name, newoption)
 			if err == nil {
 				f.Matchers[name] = newerf
 			}

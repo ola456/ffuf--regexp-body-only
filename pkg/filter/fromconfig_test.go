@@ -47,3 +47,55 @@ func TestFromConfig_FiltersAndMatchers(t *testing.T) {
 		t.Error("regexp matcher should be installed from opts.Matcher.Regexp")
 	}
 }
+
+func TestFromConfig_RegexpBodyOnly(t *testing.T) {
+	for _, bodyOnly := range []bool{false, true} {
+		opts := ffuf.NewConfigOptions()
+		opts.Filter.Regexp = "secret"
+		opts.Matcher.Regexp = "secret"
+		opts.Filter.RegexpBodyOnly = bodyOnly
+
+		mm, err := FromConfig(opts, false)
+		if err != nil {
+			t.Fatalf("FromConfig: %v", err)
+		}
+		responses := []struct {
+			name string
+			resp ffuf.Response
+			want bool
+		}{
+			{"header", ffuf.Response{Headers: map[string][]string{"X-Probe": {"secret"}}, Data: []byte("public"), Request: &ffuf.Request{}}, !bodyOnly},
+			{"body", ffuf.Response{Headers: map[string][]string{"X-Probe": {"public"}}, Data: []byte("secret"), Request: &ffuf.Request{}}, true},
+		}
+		for _, tc := range responses {
+			for name, provider := range map[string]ffuf.FilterProvider{
+				"filter":  mm.GetFilters()["regexp"],
+				"matcher": mm.GetMatchers()["regexp"],
+			} {
+				got, err := provider.Filter(&tc.resp)
+				if err != nil || got != tc.want {
+					t.Errorf("bodyOnly=%t %s %s: got %t, %v; want %t", bodyOnly, name, tc.name, got, err, tc.want)
+				}
+			}
+		}
+
+		// Interactive and per-domain filters added later use the same setting.
+		if err := mm.AddFilter("regexp", "secret", true); err != nil {
+			t.Fatal(err)
+		}
+		interactiveFilter := mm.GetFilters()["regexp"]
+		mm.RemoveFilter("regexp")
+		if err := mm.AddPerDomainFilter("example.org", "regexp", "secret"); err != nil {
+			t.Fatal(err)
+		}
+		for name, provider := range map[string]ffuf.FilterProvider{
+			"interactive": interactiveFilter,
+			"per-domain":  mm.FiltersForDomain("example.org")["regexp"],
+		} {
+			got, err := provider.Filter(&responses[0].resp)
+			if err != nil || got != !bodyOnly {
+				t.Errorf("bodyOnly=%t %s header: got %t, %v; want %t", bodyOnly, name, got, err, !bodyOnly)
+			}
+		}
+	}
+}

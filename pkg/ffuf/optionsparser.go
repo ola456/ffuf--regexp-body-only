@@ -112,13 +112,14 @@ type OutputOptions struct {
 }
 
 type FilterOptions struct {
-	Mode   string `json:"mode" ffuf:"fmode" section:"filter" usage:"Filter set operator. Either of: and, or"`
-	Lines  string `json:"lines" ffuf:"fl" section:"filter" usage:"Filter by amount of lines in response. Comma separated list of line counts and ranges"`
-	Regexp string `json:"regexp" ffuf:"fr" section:"filter" usage:"Filter regexp"`
-	Size   string `json:"size" ffuf:"fs" section:"filter" usage:"Filter HTTP response size. Comma separated list of sizes and ranges"`
-	Status string `json:"status" ffuf:"fc" section:"filter" usage:"Filter HTTP status codes from response. Comma separated list of codes and ranges"`
-	Time   string `json:"time" ffuf:"ft" section:"filter" usage:"Filter by number of milliseconds to the first response byte, either greater or less than. EG: >100 or <100"`
-	Words  string `json:"words" ffuf:"fw" section:"filter" usage:"Filter by amount of words in response. Comma separated list of word counts and ranges"`
+	Mode           string `json:"mode" ffuf:"fmode" section:"filter" usage:"Filter set operator. Either of: and, or"`
+	Lines          string `json:"lines" ffuf:"fl" section:"filter" usage:"Filter by amount of lines in response. Comma separated list of line counts and ranges"`
+	Regexp         string `json:"regexp" ffuf:"fr" section:"filter" usage:"Filter regexp"`
+	RegexpBodyOnly bool   `json:"regexp_body_only" toml:"regexp_body_only" ffuf:"mrb" section:"filter" usage:"Match -mr and -fr against response bodies only"`
+	Size           string `json:"size" ffuf:"fs" section:"filter" usage:"Filter HTTP response size. Comma separated list of sizes and ranges"`
+	Status         string `json:"status" ffuf:"fc" section:"filter" usage:"Filter HTTP status codes from response. Comma separated list of codes and ranges"`
+	Time           string `json:"time" ffuf:"ft" section:"filter" usage:"Filter by number of milliseconds to the first response byte, either greater or less than. EG: >100 or <100"`
+	Words          string `json:"words" ffuf:"fw" section:"filter" usage:"Filter by amount of words in response. Comma separated list of word counts and ranges"`
 }
 
 type MatcherOptions struct {
@@ -667,6 +668,7 @@ func ConfigFromOptions(parseOpts *ConfigOptions, ctx context.Context, cancel con
 		errs.Add(fmt.Errorf("%s", errmsg))
 	}
 	conf.FilterMode = parseOpts.Filter.Mode
+	conf.RegexpBodyOnly = parseOpts.Filter.RegexpBodyOnly
 	conf.MatcherMode = parseOpts.Matcher.Mode
 
 	if conf.AutoCalibrationPerHost {

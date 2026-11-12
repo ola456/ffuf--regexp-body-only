@@ -89,6 +89,7 @@ type Config struct {
 	Recursion                 bool                  `json:"recursion"`
 	RecursionDepth            int                   `json:"recursion_depth"`
 	RecursionStrategy         string                `json:"recursion_strategy"`
+	RegexpBodyOnly            bool                  `json:"regexp_body_only,omitempty"`
 	ReplayProxyURL            string                `json:"replayproxyurl"`
 	RequestFile               string                `json:"requestfile"`
 	RequestProto              string                `json:"requestproto"`
